@@ -1,0 +1,213 @@
+#include<iostream>
+#include <fstream>
+
+using namespace std;
+
+class Fcfs
+{
+    int arrival[10];
+    int burst[10];
+    int count;
+public:
+    Fcfs()
+    {
+        count=1;
+    }
+
+ void input()
+ {
+     int arr1[30];
+    for(int i=0;i<30;i++)
+    {
+        arr1[i]=-1;
+    }
+    int q=0;
+    ifstream inf("input.txt");
+     while (inf)
+         {
+
+             inf>>arr1[q];
+              q++;
+         }
+
+      int k=1;
+      arrival[0]=arr1[k];
+
+      for(int i=1;i<10;i++)
+      {
+          k=k+3;
+
+        if(arr1[k]== -1)
+        {
+            break;
+        }
+        else
+        {
+         arrival[i]=arr1[k] ;
+        }
+
+      }
+
+
+      k=2;
+
+      burst[0]=arr1[k];
+
+       for(int i=1;i<10;i++)
+      {
+          k=k+3;
+
+          if(arr1[k]== -1){
+            break;
+          }
+          else
+          {
+              burst[i]=arr1[k] ;
+              count++;
+          }
+
+      }
+
+ }
+
+ void ganttChart()
+ {
+
+
+
+    string process="0123456789";
+    int temp;
+    for(int i=0;i<count;i++)
+    {
+        for(int j=i;j<count;j++)
+        {
+            if(arrival[i]>arrival[j])
+            {
+                temp=arrival[j];
+                arrival[j]=arrival[i];
+                arrival[i]=temp;
+                temp=process[j];
+                process[j]=process[i];
+                process[i]=temp;
+                temp=burst[j];
+                burst[j]=burst[i];
+                burst[i]=temp;
+
+
+            }
+        }
+    }
+
+   cout<<"Gantt Chart : |";
+    for(int i=0;i<count;i++)
+    {
+        cout<<"P"<<process[i]<<" |";
+    }
+    cout<<endl;
+ }
+
+ void waiting()
+ {
+     int wait[10];
+     wait[0]=0;
+     int q;
+     int b;
+     for(int i=1; i<count;i++)
+     {
+         b=0;
+         q=i;
+        while(q!=0)
+        {
+            b=b+burst[q-1];
+            q--;
+        }
+         wait[i]=b-arrival[i];
+         if(wait[i]<0)
+         {
+             wait[i]=wait[i]-wait[i];
+         }
+     }
+
+
+    int avgwait=0;
+    cout<<"Waiting Time Of processes: ";
+    for(int i=0;i<count;i++)
+    {
+        cout<<wait[i]<<"  ";
+        avgwait=avgwait+wait[i];
+    }
+    cout<<endl;
+
+    avgwait=avgwait/count;
+
+    cout<<"Average Waiting Time: "<<avgwait<<endl;
+
+
+    response(wait);
+ }
+
+void response(int wait[])
+{
+    int avgresponse=0;
+     cout<<"Response Time Of processes: ";
+    for(int i=0;i<count;i++)
+    {
+        cout<<wait[i]<<"  ";
+        avgresponse=avgresponse+wait[i];
+    }
+      cout<<endl;
+
+      avgresponse=avgresponse/count;
+
+      cout<<"Average Response Time: "<<avgresponse<<endl;
+
+}
+ void turnaround()
+ {
+      int turn[10];
+     turn[0]=burst[0];
+     int q;
+     int b;
+     for(int i=1; i<count;i++)
+     {
+         b=0;
+         q=i;
+        while(q!= -1)
+        {
+            b=b+burst[q];
+            q--;
+        }
+         turn[i]=b-arrival[i];
+
+
+ }
+
+   int avgturn=0;
+     cout<<"Turnaround Time Of processes: ";
+       for(int i=0;i<count;i++)
+    {
+        cout<<turn[i]<<"  ";
+        avgturn=avgturn+turn[i];
+    }
+
+      cout<<endl;
+
+      avgturn=avgturn/count;
+
+      cout<<"Average Turnaround Time: "<<avgturn<<endl;
+
+ }
+
+};
+
+int main()
+{
+
+      Fcfs f;
+      f.input();
+      f.ganttChart();
+      f.waiting();
+      f.turnaround();
+
+}
+
